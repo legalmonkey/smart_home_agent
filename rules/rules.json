@@ -1,0 +1,174 @@
+[
+  {
+    "rule_id": "ml_high_energy_ac_off",
+    "description": "Turn AC OFF if ML predicts high energy usage",
+    "priority": 50,
+    "enabled": true,
+    "when": {
+      "device_type": "AC",
+      "sensor": "predicted_energy",
+      "operator": ">",
+      "value": 0.1
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "OFF"
+      }
+    }
+  },
+
+  {
+    "rule_id": "night_ac_off",
+    "description": "Turn AC OFF during night hours (23:00–06:00)",
+    "priority": 45,
+    "enabled": true,
+    "when": {
+      "device_type": "AC",
+      "sensor": "hour_of_day",
+      "operator": ">=",
+      "value": 23
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "OFF"
+      }
+    }
+  },
+
+  {
+    "rule_id": "no_occupancy_ac_off",
+    "description": "Turn AC OFF if no occupancy",
+    "priority": 40,
+    "enabled": true,
+    "when": {
+      "device_type": "AC",
+      "sensor": "occupancy",
+      "operator": "==",
+      "value": 0
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "OFF"
+      }
+    }
+  },
+
+  {
+    "rule_id": "high_temp_ac_on",
+    "description": "Turn AC ON if temperature exceeds 28°C",
+    "priority": 20,
+    "enabled": true,
+    "when": {
+      "device_type": "AC",
+      "sensor": "ambient_temperature",
+      "operator": ">",
+      "value": 28
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "ON",
+        "set_temperature": 24
+      }
+    }
+  },
+
+  {
+    "rule_id": "no_occupancy_light_off",
+    "description": "Turn OFF light when no occupancy",
+    "priority": 30,
+    "enabled": true,
+    "when": {
+      "device_type": "Light",
+      "sensor": "occupancy",
+      "operator": "==",
+      "value": 0
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "OFF"
+      }
+    }
+  },
+
+  {
+    "rule_id": "occupancy_light_on",
+    "description": "Turn ON light when occupancy detected",
+    "priority": 10,
+    "enabled": true,
+    "when": {
+      "device_type": "Light",
+      "sensor": "occupancy",
+      "operator": ">",
+      "value": 0
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "ON"
+      }
+    }
+  },
+
+  {
+    "rule_id": "high_temp_fan_on",
+    "description": "Turn ON fan if temperature exceeds 26°C",
+    "priority": 8,
+    "enabled": true,
+    "when": {
+      "device_type": "Fan",
+      "sensor": "ambient_temperature",
+      "operator": ">",
+      "value": 26
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "ON",
+        "speed": 2
+      }
+    }
+  },
+
+  {
+    "rule_id": "low_temp_fan_off",
+    "description": "Turn OFF fan if temperature below 24°C",
+    "priority": 12,
+    "enabled": true,
+    "when": {
+      "device_type": "Fan",
+      "sensor": "ambient_temperature",
+      "operator": "<",
+      "value": 24
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "OFF"
+      }
+    }
+  },
+
+  {
+    "rule_id": "night_plug_off",
+    "description": "Turn OFF smart plug when no occupancy",
+    "priority": 5,
+    "enabled": true,
+    "when": {
+      "device_type": "Plug",
+      "sensor": "occupancy",
+      "operator": "==",
+      "value": 0
+    },
+    "then": {
+      "action": "SET_STATE",
+      "payload": {
+        "power": "OFF"
+      }
+    }
+  }
+]
