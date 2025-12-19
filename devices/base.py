@@ -1,4 +1,5 @@
 from datetime import datetime
+import random
 
 
 class BaseDevice:
@@ -14,12 +15,30 @@ class BaseDevice:
             "total_kwh": 0.0
         }
 
-        # ✅ Manual / LLM override flag
-        # When True, automation must NOT change this device
+        # Manual / LLM override flag
         self.manual_override = False
 
     def update_sensors(self):
-        pass
+        """
+        Simulate realistic sensor dynamics.
+        This enables Fan and Light automation to work correctly.
+        """
+
+        # -------- OCCUPANCY DYNAMICS --------
+        if "occupancy" in self.sensors:
+            # 15% chance per tick to flip occupancy
+            if random.random() < 0.15:
+                self.sensors["occupancy"] = not self.sensors["occupancy"]
+
+        # -------- AMBIENT TEMPERATURE DRIFT --------
+        if "ambient_temperature" in self.sensors:
+            # Small random walk
+            self.sensors["ambient_temperature"] += random.uniform(-0.3, 0.4)
+
+            # Clamp to realistic bounds
+            self.sensors["ambient_temperature"] = max(
+                16.0, min(40.0, self.sensors["ambient_temperature"])
+            )
 
     def update_state(self):
         """
@@ -31,30 +50,22 @@ class BaseDevice:
     def apply_state(self, payload: dict, *, manual: bool = False):
         """
         Apply a rule / manual / LLM action payload to device state.
-
-        If manual=True:
-        - Marks this device as manually overridden
-        - Automation will not fight user intent
         """
         if not payload:
             return payload
 
-        # ✅ Mark manual override when explicitly requested
         if manual:
             self.manual_override = True
 
         for key, value in payload.items():
             self.state[key] = value
 
-        # Allow subclasses to react to state change
         self.update_state()
-
         return payload
 
     def clear_manual_override(self):
         """
         Allows automation to resume control of this device.
-        Can be called by a timer or UI action.
         """
         self.manual_override = False
 
