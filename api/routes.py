@@ -1,6 +1,10 @@
 from fastapi import APIRouter
 from datetime import datetime
 
+# In-memory store for automation events
+AUTOMATION_EVENTS = []
+
+
 def attach_routes(router, devices, rule_engine, predictor):
 
     @router.get("/state")
@@ -48,3 +52,18 @@ def attach_routes(router, devices, rule_engine, predictor):
             "actions": actions,
             "explanations": explanations
         }
+
+    # ---------- NEW: AUTOMATION EVENTS STREAM ----------
+    @router.post("/automation-events")
+    def receive_automation_event(event: dict):
+        """
+        Receives low-level automation decision JSON
+        streamed from the rule engine.
+        """
+        AUTOMATION_EVENTS.append(event)
+        return {"status": "received"}
+
+    # (Optional but useful)
+    @router.get("/automation-events")
+    def list_automation_events():
+        return AUTOMATION_EVENTS
