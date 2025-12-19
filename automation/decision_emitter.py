@@ -1,17 +1,23 @@
-import os
+from automation.log_store import add_log
 import requests
-from datetime import datetime
+import os
 
-AUTOMATION_ENDPOINT = os.getenv(
-    "AUTOMATION_ENDPOINT",
-    "http://localhost:8000/automation-events"
-)
+BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
 
 
-def emit_decision(decision: dict):
-    decision["timestamp"] = datetime.utcnow().isoformat()
+def emit_decision(payload: dict):
+    # Log locally
+    add_log({
+        "type": "automation",
+        **payload
+    })
 
+    # Send to API endpoint
     try:
-        requests.post(AUTOMATION_ENDPOINT, json=decision, timeout=1.0)
+        requests.post(
+            f"{BASE_URL}/automation-events",
+            json=payload,
+            timeout=2
+        )
     except Exception as e:
         print("[WARN] Automation event not delivered:", e)

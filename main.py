@@ -10,11 +10,15 @@ from rules.engine import RuleEngine
 from api.routes import attach_routes
 
 
-# ---------- FastAPI App ----------
+# ==============================
+# FASTAPI APP
+# ==============================
 app = FastAPI()
 
 
-# ---------- Device Registry ----------
+# ==============================
+# DEVICE REGISTRY
+# ==============================
 devices = {
     "light_1": Light("light_1", "living_room"),
     "fan_1": Fan("fan_1", "bedroom"),
@@ -22,34 +26,45 @@ devices = {
 }
 
 
-# ---------- Rule Engine ----------
+# ==============================
+# RULE ENGINE
+# ==============================
 rules = load_rules("rules/rules.json", devices)
 rule_engine = RuleEngine(rules)
 
 
-# ---------- Simulator ----------
+# ==============================
+# SIMULATOR ENGINE
+# ==============================
 simulator = SimulatorEngine(
-    devices,
+    devices=devices,
     rule_engine=rule_engine,
 )
 
 
-# ---------- API Routes ----------
+# ==============================
+# API ROUTES
+# ==============================
 router = APIRouter()
+
 attach_routes(
-    router,
-    devices,
-    rule_engine,
-    simulator.predictor,   # ✅ use the simulator’s predictor
+    router=router,
+    devices=devices,
+    rule_engine=rule_engine,
+    predictor=simulator.predictor,  # ✅ single source of truth
+    engine=simulator                # ✅ REQUIRED for mode toggle
 )
+
 app.include_router(router)
 
 
-# ---------- Startup Hook ----------
+# ==============================
+# STARTUP HOOK (RENDER SAFE)
+# ==============================
 @app.on_event("startup")
 def start_simulator():
     """
     Start the simulator exactly once when the app boots.
-    This is REQUIRED for Render deployment.
+    REQUIRED for Render / production deployment.
     """
     simulator.start()
