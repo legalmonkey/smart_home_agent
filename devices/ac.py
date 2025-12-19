@@ -36,3 +36,12 @@ class AC(BaseDevice):
             self.energy["current_watts"] = 0
 
         super().update_energy(tick_seconds)
+    def turn_on(self):
+        self.state["power"] = "ON"
+
+    def turn_off(self):
+        self.state["power"] = "OFF"
+
+    def set_temperature(self, value):
+        if value is not None:
+            self.state["set_temperature"] = int(value)
