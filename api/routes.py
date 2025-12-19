@@ -73,20 +73,6 @@ def attach_routes(router, devices, rule_engine, predictor, engine):
     def activate_manual_mode(payload: dict):
         """
         Activates MANUAL mode.
-
-        Expected payload (from LLM):
-        {
-          "mode": "MANUAL",
-          "actions": [
-            {
-              "device_id": "ac_1",
-              "device_type": "AC",
-              "room": "living_room",
-              "action": "ON",
-              "value": null
-            }
-          ]
-        }
         """
         engine.set_manual_mode(payload)
         return {
@@ -112,6 +98,20 @@ def attach_routes(router, devices, rule_engine, predictor, engine):
         """
         return {
             "active_mode": engine.mode.value
+        }
+
+    # ==============================
+    # ❤️ HEALTH CHECK (RENDER)
+    # ==============================
+    @router.get("/health")
+    def health_check():
+        """
+        Health endpoint for Render / uptime monitoring.
+        """
+        return {
+            "status": "ok",
+            "simulator_running": engine.running,
+            "mode": engine.mode.value
         }
 
     # ==============================
