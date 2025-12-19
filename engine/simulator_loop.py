@@ -63,7 +63,7 @@ class ActionMapper:
 # SIMULATOR ENGINE
 # ==============================
 class SimulatorEngine:
-    def __init__(self, devices, rule_engine=None, tick_seconds=1):
+    def __init__(self, devices, rule_engine=None, tick_seconds=15):
         self.devices = devices
         self.rule_engine = rule_engine
         self.tick_seconds = tick_seconds
