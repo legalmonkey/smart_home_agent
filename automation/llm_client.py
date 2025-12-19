@@ -3,7 +3,7 @@ import requests
 LLM_ACTIONS_URL = "https://backendllm-uoeo.onrender.com/actions"
 
 
-def fetch_llm_actions(timeout=3):
+def fetch_llm_actions(command:str,timeout=3):
     """
     Fetch manual actions from LLM backend.
     Expected response:
@@ -19,6 +19,12 @@ def fetch_llm_actions(timeout=3):
       ]
     }
     """
+    payload={
+
+        "command":command
+    }
+    
+    
     try:
         response = requests.get(LLM_ACTIONS_URL, timeout=timeout)
         response.raise_for_status()
